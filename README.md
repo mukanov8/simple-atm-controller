@@ -1,2 +1,3 @@
-# simple-atm-controller
- Implementation of a simple atm controller for Bear Robotics Assessment
+# Simple ATM Controller
+
+ Implementation of a simple atm controller for Bear Robotics OA
