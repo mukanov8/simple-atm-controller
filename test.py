@@ -24,6 +24,7 @@ class AtmTest(unittest.TestCase):
 
     def testAuth(self):
         atm = ATM()
+
         # if inserted PIN is not valid
         atm.insertCard('2022-2022-0000-0000')
         atm.insertPin('1111')
