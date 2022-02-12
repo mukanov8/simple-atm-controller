@@ -82,13 +82,11 @@ class Bank:
         selectedAccount = params['account']
         inputAmount = params['inputAmount']
         account = self.db[cardNumber]['accounts'][selectedAccount]
-
-        if params['inputAmount'] < 0:
+        
+        if params['inputAmount'] < 0 :
             params['status'] = Status['ERROR']
-            params['message'] = 'Please input money!'
-            # return
-
-        if params['transaction'] == Transaction['BALANCE']:
+            params['message'] = 'Please input correct amount!'
+        elif params['transaction'] == Transaction['BALANCE']:
             params['status'] = Status['SUCCESS']
             params['message'] = 'Displaying current balance...'
         elif params['transaction'] == Transaction['DEPOSIT']:
@@ -119,7 +117,6 @@ class Bank:
                     params['status'] = Status['SUCCESS']
                     params['message'] = '{} completed'.format(
                         Transaction['WITHDRAW'])
-
         else:
             params['status'] = Status['ERROR']
             params['message'] = 'Please select valid transaction type'
