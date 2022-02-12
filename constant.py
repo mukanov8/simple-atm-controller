@@ -15,3 +15,5 @@ Status = {
     'ERROR': 'Error',
     'SUCCESS': 'Success',
 }
+
+INITIAL_AVAILABLE_AMOUNT = 30000

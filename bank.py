@@ -9,10 +9,10 @@ mockBankDb = {
         'pin': '0000',
         'accounts': {
             Account['CHECKING']: {
-                'balance': 2000,
+                'balance': 10000,
             },
             Account['SAVINGS']: {
-                'balance': 4000,
+                'balance': 20000,
             },
         },
     },
@@ -20,10 +20,10 @@ mockBankDb = {
         'pin': '0001',
         'accounts': {
             Account['CHECKING']: {
-                'balance': 2000,
+                'balance': 20000,
             },
             Account['SAVINGS']: {
-                'balance': 4000,
+                'balance': 40000,
             },
         },
     },
@@ -31,10 +31,10 @@ mockBankDb = {
         'pin': '0002',
         'accounts': {
             Account['CHECKING']: {
-                'balance': 2000,
+                'balance': 30000,
             },
             Account['SAVINGS']: {
-                'balance': 4000,
+                'balance': 50000,
             },
         },
     },
@@ -54,8 +54,10 @@ class Bank:
             return self.db[cardNumber]['pin'] == pinNumber
         return False
 
-    def validateAccount(self, cardNumber: str, accountType: str) -> bool:
-        return accountType in self.db[cardNumber]['accounts']
+    def validateAccount(self, cardNumber: str, account: str) -> bool:
+        if self.validateCard(cardNumber):
+            return account in self.db[cardNumber]['accounts']
+        return False
 
     def getAccounts(self, cardNumber: str):
         if self.validateCard(cardNumber):
@@ -67,9 +69,9 @@ class Bank:
           A method to process transaction,
           params: {
             'cardNumber': cardNumber,
-            'accountType': accountType,
+            'account': Account,
             'inputAmount': inputAmount,
-            'transaction': TransactionType,
+            'transaction': Transaction,
             'availableAmount': availableAmount,
             'balance': None,
             'status': None,
@@ -78,9 +80,9 @@ class Bank:
         '''
 
         cardNumber = params['cardNumber']
-        accountType = params['accountType']
+        selectedAccount = params['account']
         inputAmount = params['inputAmount']
-        account = self.db[cardNumber]['accounts'][accountType]
+        account = self.db[cardNumber]['accounts'][selectedAccount]
 
         if params['inputAmount'] < 0:
             params['status'] = Status['ERROR']
@@ -98,7 +100,7 @@ class Bank:
                 params['status'] = Status['SUCCESS']
                 params['message'] = '{} completed'.format(
                     Transaction['DEPOSIT'])
-                self.db[cardNumber]['accounts'][accountType]['balance'] += inputAmount
+                self.db[cardNumber]['accounts'][selectedAccount]['balance'] += inputAmount
                 params['availableAmount'] += inputAmount
         elif params['transaction'] == Transaction['WITHDRAW']:
             if not inputAmount:
@@ -108,12 +110,12 @@ class Bank:
                 if inputAmount > params['availableAmount']:
                     params['status'] = Status['ERROR']
                     params['message'] = 'Insufficient funds in the ATM'
-                elif inputAmount > self.db[cardNumber]['accounts'][accountType]['balance']:
+                elif inputAmount > self.db[cardNumber]['accounts'][selectedAccount]['balance']:
                     params['status'] = Status['ERROR']
                     params['message'] = 'Insufficient funds on the account. Available: {}'.format(
                         account['balance'])
                 else:
-                    self.db[cardNumber]['accounts'][accountType]['balance'] -= inputAmount
+                    self.db[cardNumber]['accounts'][selectedAccount]['balance'] -= inputAmount
                     params['availableAmount'] -= inputAmount
                     params['status'] = Status['SUCCESS']
                     params['message'] = '{} completed'.format(
@@ -124,5 +126,5 @@ class Bank:
             params['message'] = 'Please select valid transaction type'
             return params
 
-        params['balance'] = self.db[cardNumber]['accounts'][accountType]['balance']
+        params['balance'] = self.db[cardNumber]['accounts'][selectedAccount]['balance']
         return params

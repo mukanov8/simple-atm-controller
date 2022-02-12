@@ -43,19 +43,19 @@ if __name__ == "__main__":
         print('\n')
         print('Please select account for transaction')
         while True:
-            accountType = input('{} or {}?: '.format(
+            account = input('{} or {}?: '.format(
                 Account['CHECKING'], Account['SAVINGS']))
-            if accountType not in Account.values():
+            if account not in Account.values():
                 print("Error: Please input valid account type.\n")
-            if atm.selectAccount(accountType):
+            if atm.selectAccount(account):
                 print('Success: You have selected {} account type.\n'.format(
-                    accountType))
+                    account))
                 break
             else:
-                print("Error: '{}' is not valid account type.\n".format(accountType))
+                print("Error: '{}' is not valid account type.\n".format(account))
 
         print('Please choose desired transaction to be performed with this {} account'.format(
-            accountType))
+            account))
 
         while True:
             transaction = input("{} or {} or {}?: ".format(

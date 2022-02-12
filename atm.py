@@ -1,52 +1,50 @@
 # Insert Card => PIN number => Select Account => See Balance/Deposit/Withdraw
 
 from bank import Bank
-from constant import Account, Transaction, Status
+from constant import INITIAL_AVAILABLE_AMOUNT, Account, Transaction, Status
 
 
 class ATM:
     def __init__(self):
         # self.id = id
         # self.coordinates = coordinates  # (latitude, longitude)
-
         self.bank = Bank()
-        self.availableAmount = 2000
+        self.availableAmount = INITIAL_AVAILABLE_AMOUNT
         self.card = None
-        self.accountType = None
+        self.selectedAccount = None
         self.isAuthenticated = False
 
     def insertCard(self, cardNumber: str) -> bool:
         if self.bank.validateCard(cardNumber):
             self.card = cardNumber
             return True
+        self.card = None
         return False
 
     def insertPin(self, pinNumber: str) -> bool:
         if self.bank.validatePin(self.card, pinNumber):
             self.isAuthenticated = True
             return True
-        self.isAuthenticated = True
+        self.isAuthenticated = False
         return False
 
     def showAccounts(self) -> dict:
         if self.isAuthenticated:
             return self.bank.getAccounts(self.card)
-        else:
-            return None
+        return None
 
-    def selectAccount(self, accountType: Account) -> bool:
-        if self.bank.validateAccount(self.card, accountType):
-            self.accountType = accountType
+    def selectAccount(self, account: Account) -> bool:
+        if self.isAuthenticated and self.bank.validateAccount(self.card, account):
+            self.selectedAccount = account
             return True
-        else:
-            self.accountType = None
-            return False
+        self.selectedAccount = None
+        return False
 
     def executeTransaction(self, transaction: Transaction, inputAmount: int) -> dict:
 
         params = {
             'cardNumber': self.card,
-            'accountType': self.accountType,
+            'account': self.selectedAccount,
             'inputAmount': inputAmount,
             'transaction': transaction,
             'availableAmount': self.availableAmount,
